@@ -4,13 +4,10 @@
 
 <div align="left">
 
-| | |
-|---|---|
-| **Profile Views** | ![Profile Views](https://komarev.com/ghpvc/?username=Iankulani&color=brightgreen&style=flat-square) |
-| **Alternative Views** | [![Visitor Count](https://api.visitorbadge.io/api/visitors?path=Iankulani%2Fawesomebear&label=Repo%20Views&countColor=%23263759)](https://visitorbadge.io/status?path=Iankulani%2Fawesomebear) |
-| **GitHub Stars** | ![GitHub stars](https://img.shields.io/github/stars/Iankulani/awesomebear?style=flat-square&color=yellow) |
-| **Total Stars** | ![Stars](https://img.shields.io/github/stars/Iankulani?style=flat-square&label=Total%20Stars&color=brightgreen) |
-| **Repo Forks** | ![GitHub forks](https://img.shields.io/github/forks/Iankulani/awesomebear?style=flat-square&color=blue) |
+
+![Visitor Count](https://api.visitorbadge.io/api/visitors?path=Iankulani%2Fawesomebear&label=Repo%20Views&countColor=%23263759)
+![GitHub stars](https://img.shields.io/github/stars/Iankulani/awesomebear?style=flat-square&color=yellow)
+![GitHub forks](https://img.shields.io/github/forks/Iankulani/awesomebear?style=flat-square&color=blue)
 ---
 
 </div>
