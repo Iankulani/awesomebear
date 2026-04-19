@@ -1,83 +1,98 @@
-# Multi-stage build for Awesome-Bear Cybersecurity Tool
-FROM python:3.11-slim AS builder
+# Multi-stage Dockerfile for Awesome-Bear Cybersecurity Tool
+FROM alpine:3.19 as builder
 
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    py3-setuptools \
+    py3-wheel \
+    gcc \
+    musl-dev \
+    python3-dev \
+    libffi-dev \
+    openssl-dev \
+    cargo \
+    nmap \
+    curl \
+    bind-tools \
+    traceroute \
+    openssh-client \
+    sudo
+
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies for building
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    make \
-    libffi-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install Python packages
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Final stage
-FROM python:3.11-slim
+FROM alpine:3.19
 
-# Install runtime system dependencies
-RUN apt-get update && apt-get install -y \
-    # Network tools
+# Install runtime dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
     nmap \
-    net-tools \
-    iputils-ping \
-    traceroute \
-    dnsutils \
     curl \
-    wget \
-    # Nikto web scanner
-    nikto \
-    # SSH client
+    bind-tools \
+    traceroute \
     openssh-client \
-    # Process management
+    sudo \
+    tcpdump \
+    iputils \
+    util-linux \
     procps \
-    # iptables for firewall management
-    iptables \
-    # Chrome for WhatsApp (headless)
-    wget \
-    gnupg \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Google Chrome for Selenium
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/*
+    chromium \
+    chromium-chromedriver \
+    && rm -rf /var/cache/apk/*
 
 # Create non-root user for security
-RUN useradd -m -s /bin/bash bear && \
-    mkdir -p /home/bear/.awesomebear && \
-    chown -R bear:bear /home/bear
-
-WORKDIR /app
+RUN addgroup -g 1000 -S bear && \
+    adduser -u 1000 -S bear -G bear && \
+    echo "bear ALL=(ALL) NOPASSWD: /sbin/iptables" >> /etc/sudoers
 
 # Copy Python packages from builder
-COPY --from=builder /root/.local /home/bear/.local
+COPY --from=builder /usr/lib/python3*/site-packages /usr/lib/python3*/site-packages
+COPY --from=builder /usr/bin /usr/bin
 
-# Copy application
-COPY awesomebear.py .
-COPY --chown=bear:bear . .
+# Create application directories
+RUN mkdir -p /app/.awesomebear && \
+    mkdir -p /app/reports && \
+    chown -R bear:bear /app
 
-# Set environment variables
-ENV PATH=/home/bear/.local/bin:$PATH
-ENV PYTHONUNBUFFERED=1
+# Set working directory
+WORKDIR /app
+
+# Copy application files
+COPY --chown=bear:bear awesomebear.py .
+COPY --chown=bear:bear requirements.txt .
+
+# Create entrypoint script
+RUN echo '#!/bin/sh\n\
+echo "🐻 Starting Awesome-Bear v1.0.0"\n\
+echo "================================="\n\
+echo "Container Info:"\n\
+echo "  Hostname: $(hostname)"\n\
+echo "  IP Address: $(hostname -i 2>/dev/null || echo "unknown")"\n\
+echo "================================="\n\
+echo "Available Commands:"\n\
+echo "  - Execute commands directly: python3 awesomebear.py"\n\
+echo "  - Web interface: http://localhost:8080"\n\
+echo "=================================\n"\
+exec python3 awesomebear.py\n' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+# Expose ports
+EXPOSE 8080 8080/tcp
+EXPOSE 8080/udp
 
 # Switch to non-root user
 USER bear
 
-# Expose ports
-EXPOSE 8080 8080/tcp
-EXPOSE 8000-8100/tcp
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/ || exit 1
+    CMD python3 -c "import socket; s=socket.socket(); s.connect(('localhost', 8080))" || exit 1
 
 # Entry point
-ENTRYPOINT ["python", "awesomebear.py"]
+ENTRYPOINT ["/entrypoint.sh"]
