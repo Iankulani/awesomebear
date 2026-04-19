@@ -2,6 +2,19 @@
 
 <img width="636" height="524" alt="bear" src="https://github.com/user-attachments/assets/074f0ec3-60fc-4918-9977-57ca38777014" />
 
+<div align="left">
+
+| | |
+|---|---|
+| **Profile Views** | ![Profile Views](https://komarev.com/ghpvc/?username=Iankulani&color=brightgreen&style=flat-square) |
+| **Alternative Views** | [![Visitor Count](https://api.visitorbadge.io/api/visitors?path=Iankulani%2Fawesomebear&label=Repo%20Views&countColor=%23263759)](https://visitorbadge.io/status?path=Iankulani%2Fawesomebear) |
+| **GitHub Stars** | ![GitHub stars](https://img.shields.io/github/stars/Iankulani/awesomebear?style=flat-square&color=yellow) |
+| **Total Stars** | ![Stars](https://img.shields.io/github/stars/Iankulani?style=flat-square&label=Total%20Stars&color=brightgreen) |
+| **Repo Forks** | ![GitHub forks](https://img.shields.io/github/forks/Iankulani/awesomebear?style=flat-square&color=blue) |
+---
+
+</div>
+
 AwesomeBear is a powerful, all-in-one cybersecurity tool designed for penetration testing, cyber defense simulations, and advanced training exercises. Built with flexibility and realism in mind, it provides security professionals, students, and ethical hackers with a dynamic environment to test, analyze, and strengthen digital infrastructures. The platform blends offensive and defensive capabilities, making it ideal for both cyber drills and real-world scenario simulations.
 At its core, AwesomeBear offers a comprehensive network scanning engine capable of identifying open and closed ports, mapping network topologies, and detecting active devices across local and remote environments. It supports protocol-based scanning (TCP, UDP, ICMP) and allows users to customize scans based on specific targets or services such as HTTP, HTTPS, FTP, and SSH. The tool presents findings through clean visualizations, enabling quick interpretation of potential vulnerabilities.
 A standout feature of AwesomeBear is its social engineering module, which enables controlled simulation of human-based attack vectors. This includes phishing simulations, message crafting, and behavioral testing within a secure and ethical framework. These features are designed strictly for training and awareness, helping organizations understand how human factors can impact cybersecurity.
@@ -28,3 +41,6 @@ cd awesomebear
 ```bash
 python awesomebear.py
 ````
+### ⭐ **Star History**
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Iankulani/awesomebear&type=Date)](https://star-history.com/#Iankulani/awesomebear&Date)
