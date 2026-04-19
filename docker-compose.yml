@@ -1,64 +1,41 @@
 version: '3.8'
 
 services:
-  awesomebear:
+  awesome-bear:
     build: .
-    container_name: awesomebear
-    restart: unless-stopped
+    image: awesome-bear:latest
+    container_name: awesome-bear
+    hostname: awesome-bear
     ports:
       - "8080:8080"
-      - "8000-8100:8000-8100"
+      - "8080:8080/udp"
     volumes:
-      # Persist data
-      - awesomebear-data:/home/bear/.awesomebear
-      # Mount for custom files
-      - ./custom:/app/custom
-    environment:
-      - PYTHONUNBUFFERED=1
-      - TZ=UTC
-    networks:
-      - awesomebear-net
+      - awesome-bear-data:/app/.awesomebear
+      - awesome-bear-reports:/app/reports
     cap_add:
       - NET_ADMIN
       - NET_RAW
+      - SYS_ADMIN
     security_opt:
-      - seccomp:unconfined
+      - apparmor:unconfined
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
-
-  # Optional: PostgreSQL for advanced logging
-  postgres:
-    image: postgres:15
-    container_name: awesomebear-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: awesomebear
-      POSTGRES_USER: bear
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
     networks:
-      - awesomebear-net
-    profiles:
-      - advanced
-
-  # Optional: Redis for caching
-  redis:
-    image: redis:7-alpine
-    container_name: awesomebear-redis
-    restart: unless-stopped
-    networks:
-      - awesomebear-net
-    profiles:
-      - advanced
+      - security-net
 
 volumes:
-  awesomebear-data:
-  postgres-data:
+  awesome-bear-data:
+    driver: local
+  awesome-bear-reports:
+    driver: local
 
 networks:
-  awesomebear-net:
+  security-net:
     driver: bridge
